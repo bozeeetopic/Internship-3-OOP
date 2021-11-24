@@ -19,7 +19,7 @@ namespace PhoneBookApp
             }
             while (inputToContinue.Equals("da"));
         }
-    
+
         static void Mainfunction(Dictionary<Contact, List<Call>> contacts)
         {
             HelpingFunctions.PrintMenu();
@@ -75,7 +75,7 @@ namespace PhoneBookApp
             while (number >= maxValue || number < minValue);
             return number;
         }
-        static  Dictionary<Contact, List<Call>> PopulateContacts()
+        static Dictionary<Contact, List<Call>> PopulateContacts()
         {
 
             return new Dictionary<Contact, List<Call>>
@@ -89,11 +89,19 @@ namespace PhoneBookApp
             contact.AddValue(name, phone, preference);
             return contact;
         }
-        static Call PopulateList(DateTime time, Enums.Enums.Status status,int duration)
+        static Call PopulateList(DateTime time, Enums.Enums.Status status, int duration)
         {
             var call = new Call();
-            call.AddValue(time, status,duration);
+            call.AddValue(time, status, duration);
             return call;
+        }
+
+        static void PrintAllContacts(Dictionary<Contact, List<Call>> contacts)
+        {
+            foreach(var contact in contacts)
+            {
+                Console.WriteLine(contact.Key.ToString());
+            }
         }
     }
 }
