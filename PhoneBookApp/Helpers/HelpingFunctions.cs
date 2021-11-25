@@ -8,6 +8,7 @@ namespace PhoneBookApp.Helpers
 {
     static class HelpingFunctions
     {
+        public const string allLettersAndCharacters = "qwertzuiopšđžćčlkjhgfds ayxcvbnm,.-:;<>!#$%&/()=?*¸¨'";
         public static void PrintMenu() { }
         public static void PrintSubMenu() { }
     }
