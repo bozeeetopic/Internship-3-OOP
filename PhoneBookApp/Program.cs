@@ -17,6 +17,7 @@ namespace PhoneBookApp
         {
             while(true)
             {
+                Console.Clear();
                 HelpingFunctions.PrintMenu(contacts.Count);
                 var userNumberInput = NumberInput("vaš izbor", 1, 8)-1;
                 var menuChoice = (Enums.Enums.MenuChoice)userNumberInput;
@@ -50,6 +51,7 @@ namespace PhoneBookApp
                             }
                             else
                             {
+                                Console.Clear();
                                 HelpingFunctions.PrintSubMenu();
                                 userNumberInput = NumberInput("vaš izbor", 1, 4) - 1;
                                 var submenuChoice = (Enums.Enums.SubMenuChoice)userNumberInput;
@@ -93,6 +95,8 @@ namespace PhoneBookApp
                             break;
                         }
                 }
+                Console.WriteLine("\n\nEnter za nastavak..");
+                Console.ReadLine();
             }
          }
 
@@ -375,12 +379,10 @@ namespace PhoneBookApp
             else
             {
                 var noCalls = true;
+                CheckForOngoingCalls(contacts);
                 foreach (var contact in contacts)
                 {
-                    if (contact.Value is null)
-                    {
-                    }
-                    else
+                    if (contact.Value != null)
                     {
                         foreach (var call in contact.Value)
                         {
