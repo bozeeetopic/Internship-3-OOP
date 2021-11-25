@@ -97,7 +97,6 @@ namespace PhoneBookApp
          }
 
 
-
         /*  static string GetPhoneNumber()
           {
               var unos = "";
@@ -168,7 +167,17 @@ namespace PhoneBookApp
 
             return new Dictionary<Contact, List<Call>>
             {
-            {PopulateContact("Ivo Sanader","1",0),new List<Call>(){PopulateCall(DateTime.Now,0,45), PopulateCall(DateTime.Now, 0,20) } }
+            {PopulateContact("Ivo Sanader","1",Enums.Enums.PreferenceType.Favorit),new List<Call>()
+                                                    {
+                                                    PopulateCall(new DateTime(1900,1,1,0,0,0),Enums.Enums.Status.Završen,999), 
+                                                    PopulateCall(DateTime.Now, Enums.Enums.Status.Traje,20) 
+                                                    } 
+            },
+            {PopulateContact("Stipe Mesić","2",Enums.Enums.PreferenceType.Blokiran),new List<Call>()
+                                                    {
+                                                    PopulateCall(new DateTime(1920,1,1,0,0,0),Enums.Enums.Status.Završen,99)
+                                                    }
+            }
             };
         }
         static Contact PopulateContact(string name, string phone, Enums.Enums.PreferenceType preference)
@@ -183,7 +192,6 @@ namespace PhoneBookApp
             call.AddValue(time, status, duration);
             return call;
         }
-
 
 
         static void PrintAllContacts(Dictionary<Contact, List<Call>> contacts)
@@ -389,7 +397,6 @@ namespace PhoneBookApp
         }
 
 
-
         static void SortedPrint(List<Call> calls)
         {
             if (calls.Count == 0)
@@ -416,14 +423,16 @@ namespace PhoneBookApp
                 {
                     foreach (var date in listOfDates)
                     {
+                        var callToErase = new Call();
                         foreach (var call in newCallsList)
                         {
                             if (call.TimeOfCall.Equals(date))
                             {
                                 Console.WriteLine(call.ToString());
-                                newCallsList.Remove(call);
+                                callToErase = call;
                             }
                         }
+                        newCallsList.Remove(callToErase);
                     }
                 }
                 newCallsList.Clear();
