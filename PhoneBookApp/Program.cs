@@ -17,8 +17,8 @@ namespace PhoneBookApp
         {
             while(true)
             {
-                HelpingFunctions.PrintMenu();
-                var userNumberInput = NumberInput("vaš izbor", 1, 8);
+                HelpingFunctions.PrintMenu(contacts.Count);
+                var userNumberInput = NumberInput("vaš izbor", 1, 8)-1;
                 var menuChoice = (Enums.Enums.MenuChoice)userNumberInput;
                 switch (menuChoice)
                 {
@@ -44,30 +44,35 @@ namespace PhoneBookApp
                         }
                     case Enums.Enums.MenuChoice.CallsFunctions:
                         {
-
-                            HelpingFunctions.PrintSubMenu();
-                            userNumberInput = NumberInput("vaš izbor", 1, 4);
-                            var submenuChoice = (Enums.Enums.SubMenuChoice)userNumberInput;
-                            switch (submenuChoice)
+                            if (contacts.Count == 0)
                             {
-                                case Enums.Enums.SubMenuChoice.PrintSorted:
-                                    {
-                                        PrintAllCallsFromContactSorted(contacts);
+                                Console.WriteLine("Nemoguće raditi operacije nad kontaktima kad oni ne postoje!");
+                            }
+                            else
+                            {
+                                HelpingFunctions.PrintSubMenu();
+                                userNumberInput = NumberInput("vaš izbor", 1, 4) - 1;
+                                var submenuChoice = (Enums.Enums.SubMenuChoice)userNumberInput;
+                                switch (submenuChoice)
+                                {
+                                    case Enums.Enums.SubMenuChoice.PrintSorted:
+                                        {
+                                            PrintAllCallsFromContactSorted(contacts);
+                                            break;
+                                        }
+                                    case Enums.Enums.SubMenuChoice.AddNew:
+                                        {
+                                            AddNewCall(contacts);
+                                            break;
+                                        }
+                                    case Enums.Enums.SubMenuChoice.Exit:
+                                        {
+                                            break;
+                                        }
+                                    default:
+                                        Console.WriteLine("Nepostojeći izbor!");
                                         break;
-                                    }
-                                case Enums.Enums.SubMenuChoice.AddNew:
-                                    {
-                                        AddNewCall(contacts);
-                                        break;
-                                    }
-                                case Enums.Enums.SubMenuChoice.Exit:
-                                    {
-                                        Mainfunction(contacts);
-                                        return;
-                                    }
-                                default:
-                                    Console.WriteLine("Nepostojeći izbor!");
-                                    break;
+                                }
                             }
                             break;
                         }
@@ -223,41 +228,40 @@ namespace PhoneBookApp
             }
             else
             {
-                var eraseAnotherConfirm = "";
-                do
+                var keyFound = false;
+                PrintAllContacts(contacts);
+                Console.Write("Kojeg kontakta želite izbrisati?");
+                var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
+                foreach (var contact in contacts)
                 {
-                    var keyFound = false;
-                    PrintAllContacts(contacts);
-                    Console.Write("Kojeg kontakta želite izbrisati?");
-                    var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
-                    foreach (var contact in contacts)
+                    if (contact.Key.PhoneNumber == number)
                     {
-                        if (contact.Key.PhoneNumber == number)
+                        Console.WriteLine("Želite li sigurno izbrisati kontakta: \n" + contact.Key.ToString() + " (da)?");
+                        var eraseConfirm = Console.ReadLine();
+                        if (eraseConfirm is "da")
                         {
-                            Console.WriteLine("Želite li sigurno izbrisati kontakta: " + contact.Key.ToString() + " (da)?");
-                            var eraseConfirm = Console.ReadLine();
-                            if (eraseConfirm is "da")
+                            if (!(contact.Value is null))
                             {
-                                if (!(contact.Value is null))
-                                {
-                                    contact.Value.Clear();
-                                }
-                                contacts.Remove(contact.Key);
+                                contact.Value.Clear();
                             }
-                            keyFound = true;
+                            contacts.Remove(contact.Key);
                         }
-                    }
-                    if (!keyFound)
-                    {
-                        Console.WriteLine("Nije pronađen kontakt sa navedenim brojem!");
-                    }
-                    if (contacts.Count > 0)
-                    {
-                        Console.Write("Želite li još kontakata brisati (da)? ");
-                        eraseAnotherConfirm = Console.ReadLine();
+                        keyFound = true;
                     }
                 }
-                while (eraseAnotherConfirm.Equals("da") || (contacts.Count == 0));
+                if (!keyFound)
+                {
+                    Console.WriteLine("Nije pronađen kontakt sa navedenim brojem!");
+                }
+                if (contacts.Count > 0)
+                {
+                    Console.Write("Želite li još kontakata brisati (da)? ");
+                    var eraseAnotherConfirm = Console.ReadLine();
+                    if(eraseAnotherConfirm == "da")
+                    {
+                        EraseContacts(contacts);
+                    }
+                }
             }
         }
         static void EditContactPreference(Dictionary<Contact, List<Call>> contacts)
@@ -279,7 +283,7 @@ namespace PhoneBookApp
                         Console.WriteLine("Nova preferenca:, za favorit 0, za default 1 te za blokirati broj upišite 2.");
                         var preference = NumberInput("vaš odabir", 0, 3);
                         var myPreference = (Enums.Enums.PreferenceType)preference;
-                        Console.WriteLine("Želite li sigurno mijenjati kontaktu: " + contact.Key.ToString() + " preferencu u: " + myPreference + "(da)?");
+                        Console.WriteLine("Želite li sigurno mijenjati:\nKontaktu " + contact.Key.ToString() + " preferencu u: " + myPreference + "(da)?");
                         string eraseConfirm = Console.ReadLine();
                         if (eraseConfirm == "da")
                         {
@@ -295,79 +299,63 @@ namespace PhoneBookApp
         }
         static void PrintAllCallsFromContactSorted(Dictionary<Contact, List<Call>> contacts)
         {
-            if (contacts.Count == 0)
+            PrintAllContacts(contacts);
+            Console.Write("Kojem kontaktu želite ispisati pozive?");
+            var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
+            foreach (var contact in contacts)
             {
-                Console.WriteLine("Lista kontakata prazna, ne postoji kontakt s kojim ste imali pozive!");
-                return;
-            }
-            else
-            {
-                PrintAllContacts(contacts);
-                Console.Write("Kojem kontaktu želite ispisati pozive?");
-                var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
-                foreach (var contact in contacts)
+                if (contact.Key.PhoneNumber == number)
                 {
-                    if (contact.Key.PhoneNumber == number)
-                    {
-                        SortedPrint(contact.Value);
-                    }
+                    SortedPrint(contact.Value);
                 }
             }
         }
         static void AddNewCall(Dictionary<Contact, List<Call>> contacts)
         {
-            if (contacts.Count == 0)
+            PrintAllContacts(contacts);
+            Console.WriteLine("Odaberite kontakta kojeg želite nazvati: ");
+            var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
+            foreach (var contact in contacts)
             {
-                Console.WriteLine("Lista kontakata prazna, ne postoji kontakt kojeg možete nazvati!");
-                return;
-            }
-            else
-            {
-                PrintAllContacts(contacts);
-                Console.WriteLine("Odaberite kontakta kojeg želite nazvati: ");
-                var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
-                foreach (var contact in contacts)
+                if (contact.Key.PhoneNumber == number)
                 {
-                    if (contact.Key.PhoneNumber == number)
+                    if (contact.Key.Preference == Enums.Enums.PreferenceType.Blokiran)
                     {
-                        if (contact.Key.Preference == Enums.Enums.PreferenceType.Blocked)
+                        Console.WriteLine("Kontakt blokiran, nemoguće obaviti poziv!");
+                        return;
+                    }
+                    else
+                    {
+                        if (CheckForOngoingCalls(contacts))
                         {
-                            Console.WriteLine("Kontakt blokiran, nemoguće obaviti poziv!");
+                            Console.WriteLine("Nemoguće pozvati drugu osobu jer ste trenutno u pozivu!");
                             return;
                         }
                         else
                         {
-                            if (CheckForOngoingCalls(contacts))
+                            switch ((Enums.Enums.Status)HelpingFunctions.RandomCallReply)
                             {
-                                Console.WriteLine("Nemoguće pozvati drugu osobu jer ste trenutno u pozivu!");
-                                return;
+                                case Enums.Enums.Status.Propušten:
+                                    {
+                                        contact.Value.Add(PopulateCall(DateTime.Now, Enums.Enums.Status.Propušten, 0));
+                                        break;
+                                    }
+                                case Enums.Enums.Status.Traje:
+                                    {
+                                        contact.Value.Add(PopulateCall(DateTime.Now, Enums.Enums.Status.Traje, HelpingFunctions.RandomCallDuration));
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        break;
+                                    }
                             }
-                            else
-                            {
-                                switch ((Enums.Enums.Status)HelpingFunctions.RandomCallReply)
-                                {
-                                    case Enums.Enums.Status.Missed:
-                                        {
-                                            contact.Value.Add(PopulateCall(DateTime.Now, Enums.Enums.Status.Missed, 0));
-                                            break;
-                                        }
-                                    case Enums.Enums.Status.Ongoing:
-                                        {
-                                            contact.Value.Add(PopulateCall(DateTime.Now, Enums.Enums.Status.Ongoing, HelpingFunctions.RandomCallDuration));
-                                            break;
-                                        }
-                                    default:
-                                        {
-                                            break;
-                                        }
-                                }
-                                return;
-                            }
+                            return;
                         }
                     }
                 }
-                Console.WriteLine("Kontakt sa traženim brojem ne postoji!");
             }
+            Console.WriteLine("Kontakt sa traženim brojem ne postoji!");  
         }
         static void PrintAllCalls(Dictionary<Contact, List<Call>> contacts)
         {
@@ -485,11 +473,11 @@ namespace PhoneBookApp
                 {
                     foreach (var call in contact.Value)
                     {
-                        if (call.CallStatus == Enums.Enums.Status.Ongoing)
+                        if (call.CallStatus == Enums.Enums.Status.Traje)
                         {
                             if (call.TimeOfCall.AddSeconds(call.Duration) < DateTime.Now)
                             {
-                                call.CallStatus = Enums.Enums.Status.Finished;
+                                call.CallStatus = Enums.Enums.Status.Završen;
                             }
                             else
                             {

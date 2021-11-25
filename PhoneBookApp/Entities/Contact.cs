@@ -19,6 +19,6 @@ namespace PhoneBookApp.Entities
         }
 
 
-        public override string ToString() => $"Contact: {NameAndSurname}\tContact  number: {PhoneNumber}  Type: {Preference}";
+        public override string ToString() => $"Kontakt: {NameAndSurname}\t Broj: {PhoneNumber}  Tip: {Preference}";
     }
 }

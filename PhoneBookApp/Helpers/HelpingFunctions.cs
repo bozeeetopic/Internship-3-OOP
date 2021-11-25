@@ -13,17 +13,38 @@ namespace PhoneBookApp.Helpers
         public static int RandomCallDuration => NumberGenerator.Next(1,20);
 
         public const string allLettersAndCharacters = "qwertzuiopšđžćčlkjhgfds ayxcvbnm,.-:;<>!#$%&/()=?*¸¨'";
-        public static void PrintMenu()
+        static void Red(string input)
         {
-            Console.WriteLine("Odaberite akciju:");
-            Console.WriteLine("1 - Ispis svih kontakata");
-            Console.WriteLine("2 - Dodavanje novih kontakata u imenik");
-            Console.WriteLine("3 - Brisanje kontakata iz imenika");
-            Console.WriteLine("4 - Editiranje preference kontakta");
-            Console.WriteLine("5 - Upravljanje kontaktom koje otvara podmenu");
-            Console.WriteLine("6 - Ispis svih poziva");
-            Console.WriteLine("7 - Izlaz iz aplikacije");
-            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write(input);
+            Console.ForegroundColor = ConsoleColor.Gray;
+        }
+        public static void PrintMenu(int count)
+        {
+            if (count > 0)
+            {
+                Console.WriteLine("Odaberite akciju:");
+                Console.WriteLine("1 - Ispis svih kontakata");
+                Console.WriteLine("2 - Dodavanje novih kontakata u imenik");
+                Console.WriteLine("3 - Brisanje kontakata iz imenika");
+                Console.WriteLine("4 - Editiranje preference kontakta");
+                Console.WriteLine("5 - Upravljanje kontaktom koje otvara podmenu");
+                Console.WriteLine("6 - Ispis svih poziva");
+                Console.WriteLine("7 - Izlaz iz aplikacije");
+                Console.WriteLine();
+            }
+            else
+            {
+                Console.WriteLine("Odaberite akciju:");
+                Red("1 - Ispis svih kontakata\n");
+                Console.WriteLine("2 - Dodavanje novih kontakata u imenik");
+                Red("3 - Brisanje kontakata iz imenika\n");
+                Red("4 - Editiranje preference kontakta\n");
+                Red("5 - Upravljanje kontaktom koje otvara podmenu\n");
+                Red("6 - Ispis svih poziva\n");
+                Console.WriteLine("7 - Izlaz iz aplikacije");
+                Console.WriteLine();
+            }
         }
         public static void PrintSubMenu()
         {

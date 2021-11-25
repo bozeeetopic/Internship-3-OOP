@@ -18,6 +18,6 @@ namespace PhoneBookApp.Entities
             return this;
         }
 
-        public override string ToString() => $"Call start: {TimeOfCall} \tDuration: {Duration}s     -     {CallStatus}";
+        public override string ToString() => $"Vrijeme poziva: {TimeOfCall} \tTrajanje: {Duration}s     -     {CallStatus}";
     }
 }

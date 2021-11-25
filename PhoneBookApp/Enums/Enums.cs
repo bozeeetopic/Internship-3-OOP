@@ -8,15 +8,15 @@ namespace PhoneBookApp.Enums
     {
         public enum Status
         {
-            Ongoing,
-            Missed,
-            Finished
+            Traje,
+            Propušten,
+            Završen
         }
         public enum PreferenceType
         {
-            Favourite,
-            Normal,
-            Blocked
+            Favorit,
+            Regularni,
+            Blokiran
         }
         public enum MenuChoice
         {
