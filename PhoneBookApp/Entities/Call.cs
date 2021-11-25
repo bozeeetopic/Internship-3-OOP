@@ -7,17 +7,17 @@ namespace PhoneBookApp.Entities
 {
     class Call
     {
-        public DateTime _TimeOfCall;
-        public int _Duration;
-        public  Enums.Enums.Status _CallStatus { get; set; }
-        public Call AddValue(DateTime TimeOfCall, Enums.Enums.Status CallStatus,int duration)
+        public DateTime TimeOfCall;
+        public int Duration;
+        public  Enums.Enums.Status CallStatus { get; set; }
+        public Call AddValue(DateTime TimeOfCall, Enums.Enums.Status callStatus,int duration)
         {
-            _TimeOfCall = TimeOfCall;
-            _Duration = duration;
-            _CallStatus = CallStatus;
+            this.TimeOfCall = TimeOfCall;
+            Duration = duration;
+            CallStatus = callStatus;
             return this;
         }
 
-        public override string ToString() => $"Call start: {_TimeOfCall} \tDuration: {_Duration}s     -     {_CallStatus}";
+        public override string ToString() => $"Call start: {TimeOfCall} \tDuration: {Duration}s     -     {CallStatus}";
     }
 }

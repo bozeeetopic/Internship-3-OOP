@@ -13,55 +13,57 @@ namespace PhoneBookApp
             Mainfunction(contacts);
                
         }
-
         static void Mainfunction(Dictionary<Contact, List<Call>> contacts)
         {
             while(true)
             {
                 HelpingFunctions.PrintMenu();
                 var userNumberInput = NumberInput("vaš izbor", 1, 8);
-                switch (userNumberInput)
+                var menuChoice = (Enums.Enums.MenuChoice)userNumberInput;
+                switch (menuChoice)
                 {
-                    case 1:
+                    case Enums.Enums.MenuChoice.Print:
                         {
                             PrintAllContacts(contacts);
                             break;
                         }
-                    case 2:
+                    case Enums.Enums.MenuChoice.Add:
                         {
                             AddNewContact(contacts);
                             break;
                         }
-                    case 3:
+                    case Enums.Enums.MenuChoice.Erase:
                         {
                             EraseContacts(contacts);
                             break;
                         }
-                    case 4:
+                    case Enums.Enums.MenuChoice.EditPrefs:
                         {
                             EditContactPreference(contacts);
                             break;
                         }
-                    case 5:
+                    case Enums.Enums.MenuChoice.CallsFunctions:
                         {
+
                             HelpingFunctions.PrintSubMenu();
-                            userNumberInput = NumberInput("vaš izbor", 0, 4);
-                            switch (userNumberInput)
+                            userNumberInput = NumberInput("vaš izbor", 1, 4);
+                            var submenuChoice = (Enums.Enums.SubMenuChoice)userNumberInput;
+                            switch (submenuChoice)
                             {
-                                case 0:
+                                case Enums.Enums.SubMenuChoice.PrintSorted:
                                     {
                                         PrintAllCallsFromContactSorted(contacts);
                                         break;
                                     }
-                                case 1:
+                                case Enums.Enums.SubMenuChoice.AddNew:
                                     {
                                         AddNewCall(contacts);
                                         break;
                                     }
-                                case 2:
+                                case Enums.Enums.SubMenuChoice.Exit:
                                     {
                                         Mainfunction(contacts);
-                                        break;
+                                        return;
                                     }
                                 default:
                                     Console.WriteLine("Nepostojeći izbor!");
@@ -69,14 +71,15 @@ namespace PhoneBookApp
                             }
                             break;
                         }
-                    case 6:
+                    case Enums.Enums.MenuChoice.PrintCalls:
                         {
                             PrintAllCalls(contacts);
                             break;
                         }
-                    case 7:
+                    case Enums.Enums.MenuChoice.Exit:
                         {
                             Console.WriteLine("Hvala na korištenju!");
+                            Console.ReadLine();
                             return;
                         }
                     default:
@@ -87,19 +90,21 @@ namespace PhoneBookApp
                 }
             }
          }
-        //Mislio zakomplicirat unos al se sitio da ima i 95,911 itd
-      /*  static string GetPhoneNumber()
-        {
-            var unos = "";
-            Console.WriteLine("Telefonski broj se odnosi na fiksni ili mobitel?");
-            do
-            {
-                Console.Write("Vaš odabir: ");
-                unos = Console.ReadLine();
-            } while ((unos != "fiksni") || (unos != "mobitel"));
-            if (unos == "fiksni") return GetTelephoneNumber();
-            else return GetMobilePhoneNumber();
-        }*/
+
+
+
+        /*  static string GetPhoneNumber()
+          {
+              var unos = "";
+              Console.WriteLine("Telefonski broj se odnosi na fiksni ili mobitel?");
+              do
+              {
+                  Console.Write("Vaš odabir: ");
+                  unos = Console.ReadLine();
+              } while ((unos != "fiksni") || (unos != "mobitel"));
+              if (unos == "fiksni") return GetTelephoneNumber();
+              else return GetMobilePhoneNumber();
+          }*/ //Mislio zakomplicirat unos al se sitio da ima i 95,911 itd
         static bool StringContainsString(string a, string b)
         {
             foreach (var character in b)
@@ -185,17 +190,22 @@ namespace PhoneBookApp
         }
         static void AddNewContact(Dictionary<Contact, List<Call>> contacts)
         {
-            Enums.Enums.PreferenceType myStatus = Enums.Enums.PreferenceType.Normal;
             var name = NameOrSurnameInput("ime", "",1);
             var surname = NameOrSurnameInput("prezime", "",0);
-            var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters ,1);
-            Console.WriteLine("Unesi koja je ovo vrsta kontakta, za favorit 0, za default 1 te za blokirati broj upišite 2.");
-            var status = NumberInput("vaš odabir",0,3);
-            if (Enum.IsDefined(typeof(Enums.Enums.PreferenceType), status))
+            var number="";
+            do
             {
-                myStatus = (Enums.Enums.PreferenceType)status;
+                if(DuplicatePhoneNumberExists(number, contacts))
+                {
+                    Console.WriteLine("Već postoji kontakt sa tim brojem telefona, pokušajte ponovno!");
+                }
+                number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
             }
-            contacts.Add(PopulateContact(name + " " + surname, number, myStatus), null);
+            while (DuplicatePhoneNumberExists(number, contacts));
+            Console.WriteLine("Unesi koja je ovo vrsta kontakta, za favorit 0, za default 1 te za blokirati broj upišite 2.");
+            var preference = NumberInput("vaš odabir",0,3);
+            var myPreference = (Enums.Enums.PreferenceType)preference;
+            contacts.Add(PopulateContact(name + " " + surname, number, myPreference), null);
         }
         static void EraseContacts(Dictionary<Contact, List<Call>> contacts)
         {
@@ -208,7 +218,7 @@ namespace PhoneBookApp
                 var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
                 foreach(var contact in contacts)
                 {
-                    if (!(contact.Key._PhoneNumber == number))
+                    if (!(contact.Key.PhoneNumber == number))
                     {
                     }
                     else
@@ -246,26 +256,23 @@ namespace PhoneBookApp
             var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
             foreach (var contact in contacts)
             {
-                if (!(contact.Key._PhoneNumber == number))
+                if (!(contact.Key.PhoneNumber == number))
                 {
                 }
                 else
                 {
-                    var myStatus = contact.Key._Preference;
                     Console.WriteLine("Nova preferenca:, za favorit 0, za default 1 te za blokirati broj upišite 2.");
-                    var status = NumberInput("vaš odabir", 0, 3);
-                    if (Enum.IsDefined(typeof(Enums.Enums.PreferenceType), status))
-                    {
-                        myStatus = (Enums.Enums.PreferenceType)status;
-                    }
-                    Console.WriteLine("Želite li sigurno mijenjati kontaktu: " + contact.Key.ToString() + " preferencu u: "+ myStatus +"?");
+                    var preference = NumberInput("vaš odabir", 0, 3);
+                    var myPreference = (Enums.Enums.PreferenceType)preference;
+                    Console.WriteLine("Želite li sigurno mijenjati kontaktu: " + contact.Key.ToString() + " preferencu u: "+ myPreference +"(da)?");
                     string eraseConfirm = Console.ReadLine();
                     if (eraseConfirm == "da")
                     {
-                        contacts.Add(PopulateContact(contact.Key._NameAndSurname, contact.Key._PhoneNumber, myStatus),contact.Value);
+                        contacts.Add(PopulateContact(contact.Key.NameAndSurname, contact.Key.PhoneNumber, myPreference),contact.Value);
                         contacts.Remove(contact.Key);
                         return;
                     }
+                    return;
                 }
             }
         }
@@ -276,7 +283,7 @@ namespace PhoneBookApp
             var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters , 1);
             foreach (var contact in contacts)
             {
-                if (contact.Key._PhoneNumber == number)
+                if (contact.Key.PhoneNumber == number)
                 {
                     SortedPrint(contact.Value);
                 }
@@ -294,10 +301,66 @@ namespace PhoneBookApp
 
 
 
-
         static void SortedPrint(List<Call> calls)
         {
             var newCallsList = new List<Call>();
+            foreach(var call in calls)
+            {
+                newCallsList.Add(PopulateCall(call.TimeOfCall,call.CallStatus,call.Duration));
+            }
+            var listOfDates = new List<DateTime>();
+            foreach(var call in newCallsList)
+            {
+                if (!listOfDates.Contains(call.TimeOfCall))
+                {
+                    listOfDates.Add(call.TimeOfCall);
+                }
+            }
+            SortDatesUp(listOfDates);
+            while (newCallsList.Count > 0)
+            {
+                foreach(var date in listOfDates)
+                {
+                    foreach (var call in newCallsList)
+                    {
+                        if (call.TimeOfCall.Equals(date))
+                        {
+                            Console.WriteLine(call.ToString());
+                            newCallsList.Remove(call);
+                        }
+                    }
+                }
+            }
+            newCallsList.Clear();
+            listOfDates.Clear();
+        }
+        static bool DuplicatePhoneNumberExists(string number, Dictionary<Contact, List<Call>> contacts)
+        {
+            foreach(var contact in contacts)
+            {
+                if(contact.Key.PhoneNumber == number)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        static void SortDatesUp(List<DateTime> list)
+        {
+            var newList = new List<DateTime>();
+            while(list.Count > 0)
+            {
+                var minDate = new DateTime(1, 1, 1, 0, 0, 0);
+                foreach (var date in list)
+                {
+                    if (date.CompareTo(minDate) >= 1)
+                        minDate = date;
+                }
+                newList.Add(minDate);
+                list.Remove(minDate);
+            }
+            foreach (var i in newList)
+                list.Add(i);
         }
     }
 }

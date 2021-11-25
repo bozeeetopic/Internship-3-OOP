@@ -7,19 +7,18 @@ namespace PhoneBookApp.Entities
 {
     class Contact
     {
-        public string _NameAndSurname { get; set; }
-        public string _PhoneNumber { get; set; }
-        public Enums.Enums.PreferenceType _Preference { get; set; }
-        public Contact AddValue(string NameAndSurname, string PhoneNumber, Enums.Enums.PreferenceType Preference)
+        public string NameAndSurname { get; set; }
+        public string PhoneNumber { get; set; }
+        public Enums.Enums.PreferenceType Preference { get; set; }
+        public Contact AddValue(string nameAndSurname, string phoneNumber, Enums.Enums.PreferenceType preference)
         {
-            _NameAndSurname = NameAndSurname;
-            _PhoneNumber = PhoneNumber;
-            _Preference = Preference;
+            NameAndSurname = nameAndSurname;
+            PhoneNumber = phoneNumber;
+            Preference = preference;
             return this;
         }
 
-        public static int Counter = 0;
 
-        public override string ToString() => $"Contact: {_NameAndSurname}\tContact  number: {_PhoneNumber}  Type: {_Preference.ToString()}";
+        public override string ToString() => $"Contact: {NameAndSurname}\tContact  number: {PhoneNumber}  Type: {Preference}";
     }
 }
