@@ -92,6 +92,7 @@ namespace PhoneBookApp
             }
             return false;
         }
+        //Mislio zakomplicirat unos al se sitio da ima i 95,911 itd
       /*  static string GetPhoneNumber()
         {
             var unos = "";
@@ -187,6 +188,7 @@ namespace PhoneBookApp
         static void EraseContacts(Dictionary<Contact, List<Call>> contacts)
         {
             var eraseAnotherConfirm = "";
+            var eraseConfirm = "";
             var keyFound = false;
             do
             {
@@ -197,9 +199,15 @@ namespace PhoneBookApp
                 {
                     if (contact.Key._PhoneNumber == number)
                     {
-                        contact.Value.Clear();
-                        contacts.Remove(contact.Key);
-                        keyFound = true;
+                        Console.WriteLine("Želite li sigurno izbrisati kontakta: "+ contact.Key.ToString()+"?");
+                        eraseConfirm = Console.ReadLine();
+                        if (eraseConfirm == "da")
+                        {
+                            if(contact.Value!=null)
+                                contact.Value.Clear();
+                            contacts.Remove(contact.Key);
+                            keyFound = true;
+                        }
                     }
                 }
                 if(!keyFound)
@@ -213,11 +221,62 @@ namespace PhoneBookApp
             while (eraseAnotherConfirm.Equals("da")||(contacts.Count==0));
         
         }
-        static void EditContactPreference(Dictionary<Contact, List<Call>> contacts) { }
-        static void PrintAllCallsFromContactSorted(Dictionary<Contact, List<Call>> contacts) { }
+        static void EditContactPreference(Dictionary<Contact, List<Call>> contacts)
+        {
+            var eraseConfirm = "";
+            PrintAllContacts(contacts);
+            Console.Write("Kojem kontaktu želite mjenjati preferencu?");
+            var number = NameOrSurnameInput("broj", "qwertzuiopšđžćčlkjhgfds ayxcvbnm,.-:;<>!#$%&/()=?*¸¨'", 1);
+            foreach (var contact in contacts)
+            {
+                if (contact.Key._PhoneNumber == number)
+                {
+                    var myStatus = contact.Key._Preference;
+                    Console.WriteLine("Nova preferenca:, za favorit 0, za default 1 te za blokirati broj upišite 2.");
+                    var status = NumberInput("vaš odabir", 0, 3);
+                    if (Enum.IsDefined(typeof(Enums.Enums.PreferenceType), status))
+                        myStatus = (Enums.Enums.PreferenceType)status;
+                    Console.WriteLine("Želite li sigurno mijenjati kontaktu: " + contact.Key.ToString() + " preferencu u: "+ myStatus +"?");
+                    eraseConfirm = Console.ReadLine();
+                    if (eraseConfirm == "da")
+                    {
+                        contacts.Add(PopulateContact(contact.Key._NameAndSurname,contact.Key._PhoneNumber,myStatus),contact.Value);
+                        contacts.Remove(contact.Key);
+                        return;
+                    }
+                }
+            }
+        }
+        static void PrintAllCallsFromContactSorted(Dictionary<Contact, List<Call>> contacts)
+        {
+            PrintAllContacts(contacts);
+            Console.Write("Kojem kontaktu želite ispisati pozive?");
+            var number = NameOrSurnameInput("broj", "qwertzuiopšđžćčlkjhgfds ayxcvbnm,.-:;<>!#$%&/()=?*¸¨'", 1);
+            foreach (var contact in contacts)
+            {
+                if (contact.Key._PhoneNumber == number)
+                {
+                    SortedPrint(contact.Value);
+                }
+            }
+        }
         static void AddNewCall(Dictionary<Contact, List<Call>> contacts) { }
-        static void PrintAllCalls(Dictionary<Contact, List<Call>> contacts) { }
+        static void PrintAllCalls(Dictionary<Contact, List<Call>> contacts)
+        {
+            foreach (var contact in contacts)
+            {
+                foreach(var call in contact.Value)
+                    Console.WriteLine(call.ToString());
+            }
+        }
 
 
+
+
+        static void SortedPrint(List<Call> calls)
+        {
+
+        }
     }
 }
+c
