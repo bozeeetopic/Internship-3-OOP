@@ -10,16 +10,16 @@ namespace PhoneBookApp
         static void Main()
         {
             var contacts = PopulateContacts();
-            Mainfunction(contacts);
+            MainFunction(contacts);
                
         }
-        static void Mainfunction(Dictionary<Contact, List<Call>> contacts)
+        static void MainFunction(Dictionary<Contact, List<Call>> contacts)
         {
             while(true)
             {
                 Console.Clear();
                 HelpingFunctions.PrintMenu(contacts.Count);
-                var userNumberInput = NumberInput("vaš izbor", 1, 8)-1;
+                var userNumberInput = UserNumberInput("vaš izbor", 1, 7);
                 var menuChoice = (Enums.Enums.MenuChoice)userNumberInput;
                 switch (menuChoice)
                 {
@@ -53,7 +53,7 @@ namespace PhoneBookApp
                             {
                                 Console.Clear();
                                 HelpingFunctions.PrintSubMenu();
-                                userNumberInput = NumberInput("vaš izbor", 1, 4) - 1;
+                                userNumberInput = UserNumberInput("vaš izbor", 1, 3);
                                 var submenuChoice = (Enums.Enums.SubMenuChoice)userNumberInput;
                                 switch (submenuChoice)
                                 {
@@ -113,18 +113,18 @@ namespace PhoneBookApp
               if (unos == "fiksni") return GetTelephoneNumber();
               else return GetMobilePhoneNumber();
           }*/ //Mislio zakomplicirat unos al se sitio da ima i emergency brojeva 95,911 itd
-        static bool StringContainsString(string a, string b)
+        static bool ForbiddenStringChecker(string stringBeingChecked, string forbiddenString)
         {
-            foreach (var character in b)
+            foreach (var character in forbiddenString)
             {
-                if (a.Contains(character)) 
+                if (stringBeingChecked.Contains(character)) 
                 {
                     return true;
                 }
             }
             return false;
         }
-        static string NameOrSurnameInput(string nameOrSurname, string forbiddenString, int minLength)
+        static string UserStringInput(string nameOrSurname, string forbiddenString, int minLength)
         {
             var repeatedInput = false;
             var input = "";
@@ -134,7 +134,7 @@ namespace PhoneBookApp
                 {
                     Console.WriteLine("Duljina " + nameOrSurname + "na mora biti " + minLength + "!");
                 }
-                if (repeatedInput && StringContainsString(input.ToLower(), forbiddenString))
+                if (repeatedInput && ForbiddenStringChecker(input.ToLower(), forbiddenString))
                 {
                     Console.WriteLine(nameOrSurname + " sadrži znak, moraju biti isključivo brojevi!");
                 }
@@ -143,10 +143,10 @@ namespace PhoneBookApp
                 Console.WriteLine();
                 repeatedInput = true;
             }
-            while ((input.Length < minLength) || StringContainsString(input.ToLower(), forbiddenString));
+            while ((input.Length < minLength) || ForbiddenStringChecker(input.ToLower(), forbiddenString));
             return input;
         }
-        static int NumberInput(string message, int minValue, int maxValue)
+        static int UserNumberInput(string message, int minValue, int maxValue)
         {
             var repeatedInput = false;
             int number;
@@ -154,7 +154,7 @@ namespace PhoneBookApp
             {
                 if (repeatedInput)
                 {
-                    Console.WriteLine("Morate unjeti broj između " + minValue + " i " + (maxValue - 1) + ".");
+                    Console.WriteLine("Morate unjeti broj između " + minValue + " i " + (maxValue) + ".");
                 }
                 Console.Write("Unesite " + message + ": ");
                 if (!int.TryParse(Console.ReadLine(), out number))
@@ -163,7 +163,7 @@ namespace PhoneBookApp
                 }
                 repeatedInput = true;
             }
-            while (number >= maxValue || number < minValue);
+            while (number > maxValue || number < minValue);
             return number;
         }
         static Dictionary<Contact, List<Call>> PopulateContacts()
@@ -172,15 +172,15 @@ namespace PhoneBookApp
             return new Dictionary<Contact, List<Call>>
             {
             {PopulateContact("Ivo Sanader","1",Enums.Enums.PreferenceType.Favorit),new List<Call>()
-                                                    {
-                                                    PopulateCall(new DateTime(1900,1,1,0,0,0),Enums.Enums.Status.Završen,999), 
-                                                    PopulateCall(DateTime.Now, Enums.Enums.Status.Traje,20) 
-                                                    } 
+                {
+                PopulateCall(new DateTime(1900,1,1,0,0,0),Enums.Enums.Status.Završen,999), 
+                PopulateCall(DateTime.Now, Enums.Enums.Status.Traje,20) 
+                } 
             },
             {PopulateContact("Stipe Mesić","2",Enums.Enums.PreferenceType.Blokiran),new List<Call>()
-                                                    {
-                                                    PopulateCall(new DateTime(1920,1,1,0,0,0),Enums.Enums.Status.Završen,99)
-                                                    }
+                {
+                PopulateCall(new DateTime(1920,1,1,0,0,0),Enums.Enums.Status.Završen,99)
+                }
             }
             };
         }
@@ -214,8 +214,8 @@ namespace PhoneBookApp
         }
         static void AddNewContact(Dictionary<Contact, List<Call>> contacts)
         {
-            var name = NameOrSurnameInput("ime", "",1);
-            var surname = NameOrSurnameInput("prezime", "",0);
+            var name = UserStringInput("ime", "",1);
+            var surname = UserStringInput("prezime", "",0);
             var number="";
             do
             {
@@ -223,12 +223,11 @@ namespace PhoneBookApp
                 {
                     Console.WriteLine("Već postoji kontakt sa tim brojem telefona, pokušajte ponovno!");
                 }
-                number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
+                number = UserStringInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
             }
             while (DuplicatePhoneNumberExists(number, contacts));
             Console.WriteLine("Unesi koja je ovo vrsta kontakta, za favorit 0, za default 1 te za blokirati broj upišite 2.");
-            var preference = NumberInput("vaš odabir",0,3);
-            var myPreference = (Enums.Enums.PreferenceType)preference;
+            var myPreference = (Enums.Enums.PreferenceType) UserNumberInput("vaš odabir", 0, 2);
             contacts.Add(PopulateContact(name + " " + surname, number, myPreference), null);
         }
         static void EraseContacts(Dictionary<Contact, List<Call>> contacts)
@@ -243,7 +242,7 @@ namespace PhoneBookApp
                 var keyFound = false;
                 PrintAllContacts(contacts);
                 Console.Write("Kojeg kontakta želite izbrisati?");
-                var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
+                var number = UserStringInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
                 foreach (var contact in contacts)
                 {
                     if (contact.Key.PhoneNumber == number)
@@ -287,13 +286,13 @@ namespace PhoneBookApp
             {
                 PrintAllContacts(contacts);
                 Console.Write("Kojem kontaktu želite mjenjati preferencu?");
-                var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
+                var number = UserStringInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
                 foreach (var contact in contacts)
                 {
                     if (contact.Key.PhoneNumber == number)
                     {
                         Console.WriteLine("Nova preferenca:, za favorit 0, za default 1 te za blokirati broj upišite 2.");
-                        var preference = NumberInput("vaš odabir", 0, 3);
+                        var preference = UserNumberInput("vaš odabir", 0, 2);
                         var myPreference = (Enums.Enums.PreferenceType)preference;
                         Console.WriteLine("Želite li sigurno mijenjati:\nKontaktu " + contact.Key.ToString() + " preferencu u: " + myPreference + "(da)?");
                         string eraseConfirm = Console.ReadLine();
@@ -313,11 +312,12 @@ namespace PhoneBookApp
         {
             PrintAllContacts(contacts);
             Console.Write("Kojem kontaktu želite ispisati pozive?");
-            var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
+            var number = UserStringInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
             foreach (var contact in contacts)
             {
                 if (contact.Key.PhoneNumber == number)
                 {
+                    SetCallsThatEndedIntoAppropriateState(contacts);
                     SortedPrint(contact.Value);
                 }
             }
@@ -326,7 +326,7 @@ namespace PhoneBookApp
         {
             PrintAllContacts(contacts);
             Console.WriteLine("Odaberite kontakta kojeg želite nazvati: ");
-            var number = NameOrSurnameInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
+            var number = UserStringInput("broj", HelpingFunctions.allLettersAndCharacters, 1);
             foreach (var contact in contacts)
             {
                 if (contact.Key.PhoneNumber == number)
@@ -338,6 +338,7 @@ namespace PhoneBookApp
                     }
                     else
                     {
+                        SetCallsThatEndedIntoAppropriateState(contacts);
                         if (CheckForOngoingCalls(contacts))
                         {
                             Console.WriteLine("Nemoguće pozvati drugu osobu jer ste trenutno u pozivu!");
@@ -379,7 +380,7 @@ namespace PhoneBookApp
             else
             {
                 var noCalls = true;
-                CheckForOngoingCalls(contacts);
+                SetCallsThatEndedIntoAppropriateState(contacts);
                 foreach (var contact in contacts)
                 {
                     if (contact.Value != null)
@@ -486,19 +487,31 @@ namespace PhoneBookApp
                     {
                         if (call.CallStatus == Enums.Enums.Status.Traje)
                         {
-                            if (call.TimeOfCall.AddSeconds(call.Duration) < DateTime.Now)
-                            {
-                                call.CallStatus = Enums.Enums.Status.Završen;
-                            }
-                            else
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
                 }
             }
             return false;
+        }
+        static void SetCallsThatEndedIntoAppropriateState(Dictionary<Contact, List<Call>> contacts)
+        {
+            foreach (var contact in contacts)
+            {
+                if (contact.Value.Count > 0)
+                {
+                    foreach (var call in contact.Value)
+                    {
+                        if (call.CallStatus == Enums.Enums.Status.Traje)
+                        {
+                            if (call.TimeOfCall.AddSeconds(call.Duration) < DateTime.Now)
+                            {
+                                call.CallStatus = Enums.Enums.Status.Završen;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

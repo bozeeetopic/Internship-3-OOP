@@ -20,19 +20,19 @@ namespace PhoneBookApp.Enums
         }
         public enum MenuChoice
         {
-            Print,
-            Add,
-            Erase,
-            EditPrefs,
-            CallsFunctions,
-            PrintCalls,
-            Exit
+            Print = 1,
+            Add = 2,
+            Erase = 3,
+            EditPrefs = 4,
+            CallsFunctions = 5,
+            PrintCalls = 6,
+            Exit = 7
         }
         public enum SubMenuChoice
         {
-            PrintSorted,
-            AddNew,
-            Exit
+            PrintSorted = 1,
+            AddNew = 2,
+            Exit = 3
         }
     }
 }
