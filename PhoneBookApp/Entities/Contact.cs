@@ -9,8 +9,8 @@ namespace PhoneBookApp.Entities
     {
         public string NameAndSurname { get; set; }
         public string PhoneNumber { get; set; }
-        public Enums.Enums.PreferenceType Preference { get; set; }
-        public Contact AddValue(string nameAndSurname, string phoneNumber, Enums.Enums.PreferenceType preference)
+        public Enums.PreferenceType Preference { get; set; }
+        public Contact AddValue(string nameAndSurname, string phoneNumber, Enums.PreferenceType preference)
         {
             NameAndSurname = nameAndSurname;
             PhoneNumber = phoneNumber;

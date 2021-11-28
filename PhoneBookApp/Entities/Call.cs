@@ -9,8 +9,8 @@ namespace PhoneBookApp.Entities
     {
         public DateTime TimeOfCall;
         public int Duration;
-        public  Enums.Enums.Status CallStatus { get; set; }
-        public Call AddValue(DateTime TimeOfCall, Enums.Enums.Status callStatus,int duration)
+        public  Enums.Status CallStatus { get; set; }
+        public Call AddValue(DateTime TimeOfCall, Enums.Status callStatus,int duration)
         {
             this.TimeOfCall = TimeOfCall;
             Duration = duration;
