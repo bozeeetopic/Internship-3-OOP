@@ -149,7 +149,7 @@ namespace PhoneBookApp
         static int UserNumberInput(string message, int minValue, int maxValue)
         {
             var repeatedInput = false;
-            int number;
+            int? number;
             do
             {
                 if (repeatedInput)
@@ -157,14 +157,19 @@ namespace PhoneBookApp
                     Console.WriteLine("Morate unjeti broj između " + minValue + " i " + (maxValue) + ".");
                 }
                 Console.Write("Unesite " + message + ": ");
-                if (!int.TryParse(Console.ReadLine(), out number))
+                try
                 {
-                    Console.WriteLine("Pogrešan unos, brojeve samo!");
+                    number = int.Parse(Console.ReadLine());
+                }
+                catch
+                {
+                    number = -1;
+                    Console.WriteLine("Pogrešan unos!!");
                 }
                 repeatedInput = true;
             }
             while (number > maxValue || number < minValue);
-            return number;
+            return (int)number;
         }
         static Dictionary<Contact, List<Call>> PopulateContacts()
         {
