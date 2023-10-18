@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PhoneBookApp.Enums;
-
-namespace PhoneBookApp.Entities
+﻿namespace PhoneBookApp.Entities
 {
     class Contact
     {

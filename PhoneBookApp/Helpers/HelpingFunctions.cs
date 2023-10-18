@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PhoneBookApp.Entities;
-using PhoneBookApp.Enums;
 
 namespace PhoneBookApp.Helpers
 {
     static class HelpingFunctions
     {
-        public static Random NumberGenerator = new Random();
+        static Random NumberGenerator = new Random();
         public static int RandomCallReply => NumberGenerator.Next(2);
         public static int RandomCallDuration => NumberGenerator.Next(1,20);
 
@@ -19,9 +15,9 @@ namespace PhoneBookApp.Helpers
             Console.Write(input);
             Console.ForegroundColor = ConsoleColor.Gray;
         }
-        public static void PrintMenu(int count)
+        public static void PrintMenu(int numberOfContacts)
         {
-            if (count > 0)
+            if (numberOfContacts > 0)
             {
                 Console.WriteLine("Odaberite akciju:");
                 Console.WriteLine("1 - Ispis svih kontakata");
@@ -53,6 +49,64 @@ namespace PhoneBookApp.Helpers
             Console.WriteLine("2 - Kreiranje novog poziva");
             Console.WriteLine("3 - Izlaz iz podmenua");
             Console.WriteLine();
+        }
+        public static bool ForbiddenStringChecker(string stringBeingChecked, string forbiddenString)
+        {
+            foreach (var character in forbiddenString)
+            {
+                if (stringBeingChecked.Contains(character))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public static string UserStringInput(string nameOrSurname, string forbiddenString, int minLength)
+        {
+            var repeatedInput = false;
+            var input = "";
+            do
+            {
+                if (repeatedInput && (input.Length < minLength))
+                {
+                    Console.WriteLine("Duljina " + nameOrSurname + "na mora biti " + minLength + "!");
+                }
+                if (repeatedInput && ForbiddenStringChecker(input.ToLower(), forbiddenString))
+                {
+                    Console.WriteLine(nameOrSurname + " sadrži znak, moraju biti isključivo brojevi!");
+                }
+                Console.Write("Stanovnikovo " + nameOrSurname + ": ");
+                input = Console.ReadLine();
+                Console.WriteLine();
+                repeatedInput = true;
+            }
+            while ((input.Length < minLength) || ForbiddenStringChecker(input.ToLower(), forbiddenString));
+            return input;
+        }
+        public static int UserNumberInput(string message, int minValue, int maxValue)
+        {
+            var repeatedInput = false;
+            int? number;
+            do
+            {
+                if (repeatedInput)
+                {
+                    Console.WriteLine("Morate unjeti broj između " + minValue + " i " + (maxValue) + ".");
+                }
+                Console.Write("Unesite " + message + ": ");
+                try
+                {
+                    number = int.Parse(Console.ReadLine());
+                }
+                catch
+                {
+                    number = -1;
+                    Console.WriteLine("Pogrešan unos!!");
+                }
+                repeatedInput = true;
+            }
+            while (number > maxValue || number < minValue);
+            return (int)number;
         }
     }
 }
